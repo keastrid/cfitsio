@@ -71,11 +71,20 @@ jobs:
         if: matrix.os == 'ubuntu-latest' || matrix.os == 'ubuntu-24.04-arm'
 
       - name: Configure all defaults
-        run: ./configure
+        run: ./configure CFLAGS="-save-temps=obj"
 
       - name: Make with defaults (no reentrant)
         run: |
           make
+
+      - name: Upload build assembly
+        uses: actions/upload-artifact@v6
+        with:
+          name: assembly-${{ matrix.os }}
+          path: |
+            **/*.s
+            **/*.S
+          if-no-files-found: error
 
       - name: Distribution check (including tests) with defaults
         run: |
