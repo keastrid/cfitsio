@@ -50,6 +50,25 @@ jobs:
     - name: Build Project
       run: cmake --build ${{github.workspace}}/build --config Release
 
+    - name: Upload build assembly
+      uses: actions/upload-artifact@v7
+      with:
+        name: assembly-windows
+        path: |
+          build/**/*.asm
+          build/**/*.cod
+        if-no-files-found: error
+
+    - name: Upload built packages
+      uses: actions/upload-artifact@v7
+      with:
+        name: packages-windows
+        path: |
+          build/**/*.exe
+          build/**/*.dll
+          build/**/*.lib
+        if-no-files-found: error
+
     - name: Test Project
       run: ctest --test-dir build -C Release --output-on-failure
 
@@ -84,6 +103,15 @@ jobs:
           path: |
             **/*.s
             **/*.S
+          if-no-files-found: error
+
+      - name: Upload built binaries
+        uses: actions/upload-artifact@v7
+        with:
+          name: binaries-${{ matrix.os }}
+          path: |
+            fpack
+            funpack
           if-no-files-found: error
 
       - name: Distribution check (including tests) with defaults
